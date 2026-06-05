@@ -80,7 +80,7 @@ npm run preview
 
 ## Troubleshooting 🧯
 
-- If the frontend fails to start, make sure you are in the GapFinder/ folder that contains package.json.
+- If the frontend fails to start, make sure you are in the same folder that contains package.json.
 - If the backend returns 500, verify your .env keys and Elasticsearch access.
 
 ## License 📄
