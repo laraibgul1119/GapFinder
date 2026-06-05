@@ -1,0 +1,163 @@
+import { useMemo, useState } from 'react';
+import { buildExportMarkdown } from '../data/mockData';
+
+function MarkdownPlan({ markdown }) {
+  const blocks = useMemo(() => {
+    const lines = markdown.split('\n');
+    const elements = [];
+    let listItems = [];
+
+    const flushList = () => {
+      if (listItems.length) {
+        elements.push(
+          <ul key={`ul-${elements.length}`} className="list-disc pl-5 space-y-1.5 my-3 text-slate-700">
+            {listItems.map((item, i) => (
+              <li key={i}>{item}</li>
+            ))}
+          </ul>
+        );
+        listItems = [];
+      }
+    };
+
+    lines.forEach((line, i) => {
+      if (line.startsWith('# ')) {
+        flushList();
+        elements.push(
+          <h1 key={i} className="text-2xl font-bold text-navy mb-2">
+            {line.slice(2)}
+          </h1>
+        );
+      } else if (line.startsWith('## ')) {
+        flushList();
+        elements.push(
+          <h2 key={i} className="text-xl font-semibold text-navy mt-8 mb-3 first:mt-0">
+            {line.slice(3)}
+          </h2>
+        );
+      } else if (line.startsWith('### ')) {
+        flushList();
+        elements.push(
+          <h3 key={i} className="text-base font-semibold text-navy-light mt-5 mb-2">
+            {line.slice(4)}
+          </h3>
+        );
+      } else if (line.startsWith('- ')) {
+        listItems.push(line.slice(2));
+      } else if (line.startsWith('**') && line.endsWith('**')) {
+        flushList();
+        elements.push(
+          <p key={i} className="font-semibold text-navy text-sm my-2">
+            {line.replace(/\*\*/g, '')}
+          </p>
+        );
+      } else if (line.startsWith('*') && line.endsWith('*') && !line.startsWith('**')) {
+        flushList();
+        elements.push(
+          <p key={i} className="italic text-slate-600 border-l-4 border-amber-accent pl-4 my-4">
+            {line.slice(1, -1)}
+          </p>
+        );
+      } else if (line === '---') {
+        flushList();
+        elements.push(<hr key={i} className="my-8 border-slate-200" />);
+      } else if (line.trim()) {
+        flushList();
+        elements.push(
+          <p key={i} className="text-slate-600 text-sm my-2">
+            {line.replace(/\*\*/g, '')}
+          </p>
+        );
+      }
+    });
+    flushList();
+    return elements;
+  }, [markdown]);
+
+  return <div className="prose-plan">{blocks}</div>;
+}
+
+export default function ExportScreen({ className, subject, onStartNew }) {
+  const markdown = useMemo(
+    () => buildExportMarkdown(className, subject),
+    [className, subject]
+  );
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(markdown);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  const handleDownloadPdf = () => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+    const html = `
+      <!DOCTYPE html>
+      <html><head>
+        <title>GapFinder Plan — ${className} ${subject}</title>
+        <style>
+          body { font-family: Inter, system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 24px; color: #1e293b; line-height: 1.6; }
+          h1 { color: #1e3a5f; font-size: 24px; }
+          h2 { color: #1e3a5f; font-size: 18px; margin-top: 28px; }
+          h3 { color: #2a4f7a; font-size: 14px; margin-top: 20px; }
+          em { color: #64748b; }
+          ul { padding-left: 20px; }
+          hr { border: none; border-top: 1px solid #e2e8f0; margin: 24px 0; }
+        </style>
+      </head><body><pre style="white-space: pre-wrap; font-family: inherit;">${markdown.replace(/</g, '&lt;')}</pre></body></html>`;
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
+  return (
+    <div className="animate-fade-in w-full max-w-3xl mx-auto">
+      <div className="rounded-2xl bg-emerald-50 border border-emerald-200 p-5 sm:p-6 mb-8 flex items-start gap-3">
+        <span className="text-2xl" aria-hidden>✅</span>
+        <div>
+          <h2 className="text-lg font-bold text-emerald-900">
+            Plan Approved by Teacher
+          </h2>
+          <p className="text-emerald-800/80 text-sm mt-1">
+            Your differentiated re-teaching plan for {className} {subject} is ready to share.
+          </p>
+        </div>
+      </div>
+
+      <div className="rounded-2xl bg-white border border-slate-100 shadow-card p-6 sm:p-8 mb-8">
+        <MarkdownPlan markdown={markdown} />
+      </div>
+
+      <div className="flex flex-col sm:flex-row gap-3 mb-6">
+        <button
+          type="button"
+          onClick={handleCopy}
+          className="flex-1 rounded-xl bg-navy hover:bg-navy-light text-white font-semibold py-3.5 px-4 transition-colors"
+        >
+          {copied ? 'Copied!' : 'Copy to Clipboard'}
+        </button>
+        <button
+          type="button"
+          onClick={handleDownloadPdf}
+          className="flex-1 rounded-xl border-2 border-navy text-navy font-semibold py-3.5 px-4 hover:bg-navy/5 transition-colors"
+        >
+          Download as PDF
+        </button>
+      </div>
+
+      <button
+        type="button"
+        onClick={onStartNew}
+        className="w-full rounded-xl bg-slate-100 hover:bg-slate-200 text-navy font-semibold py-3.5 px-4 transition-colors"
+      >
+        Start New Analysis
+      </button>
+    </div>
+  );
+}
