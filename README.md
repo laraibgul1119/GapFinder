@@ -1,38 +1,88 @@
-# GapFinder
-<<<<<<< HEAD
+<h1 align="center">GapFinder 🎓</h1>
+
 GapFinder helps teachers analyze quiz data to identify learning gaps and generate differentiated re-teaching plans in under 90 seconds.
-=======
 
-Teacher-facing web app to surface learning gaps from quiz CSV data (UI demo with mock analysis).
+## What it does ✅
 
-## Stack
+- Uploads a quiz CSV and normalizes headers
+- Analyzes results to identify the top learning gaps
+- Generates tiered re-teaching activities for struggling, on-track, and advanced learners
+- Exports an approved plan to copy or print
 
-- React 18 + Vite
-- Tailwind CSS 3
-- Single-page app, no backend
+## Tech stack 🧰
 
-## Run locally
+- Frontend: React 18, Vite, Tailwind CSS
+- Backend: Node.js, Express, Elasticsearch, Gemini via Google GenAI SDK
 
-```bash
+## Project structure 🗂️
+
+- src/ - React app
+- backend/ - Express API server
+- public/ - Static assets
+
+## Prerequisites 📦
+
+- Node.js 18+ (recommended)
+- An Elasticsearch deployment and API key
+- Gemini API key
+
+## Environment setup 🔐
+
+Create backend/.env with the following values:
+
+```
+PORT=3001
+GEMINI_API_KEY=your_gemini_key
+ELASTIC_URL=https://your-elastic-host
+ELASTIC_API_KEY=your_elastic_api_key
+```
+
+## Run locally 🚀
+
+### 1) Frontend
+
+```
+cd GapFinder
 npm install
 npm run dev
 ```
 
-Open the URL shown in the terminal (typically http://localhost:5173).
+Open the URL shown in the terminal (usually http://localhost:5173).
 
-## Build
+### 2) Backend
 
-```bash
+```
+cd GapFinder\backend
+npm install
+npm start
+```
+
+The API runs on http://localhost:3001.
+
+## Build and preview (frontend) 🧪
+
+```
 npm run build
 npm run preview
 ```
 
-## Screens
+## Screens 🧭
 
-1. **Upload** — CSV drag-and-drop, paste area, class/subject fields
-2. **Analyze** — Progress bar and sequential status steps
-3. **Results** — Gap cards with differentiated activities
-4. **Export** — Approved plan, copy, PDF print, start over
+1. Upload - CSV drag-and-drop or paste, plus class and subject
+2. Analyze - Status steps with progress
+3. Results - Gap cards with differentiated activities
+4. Export - Approved plan, copy, PDF print, start over
 
-Use the step indicator at the top to navigate between completed steps.
->>>>>>> 40523f1 (Initial commit: GapFinder Frontend UI)
+## Notes 📝
+
+- The frontend expects the backend at http://localhost:3001.
+- Upload accepts CSV with flexible header names (student name, question id, answers, score, topic).
+
+## Troubleshooting 🧯
+
+- If the frontend fails to start, make sure you are in the GapFinder/ folder that contains package.json.
+- If the backend returns 500, verify your .env keys and Elasticsearch access.
+
+## License 📄
+
+See LICENSE.

@@ -11,19 +11,29 @@ export default function UploadScreen({
   const [dragOver, setDragOver] = useState(false);
   const [fileName, setFileName] = useState('quiz_responses_class9b.csv');
   const [pasteOpen, setPasteOpen] = useState(false);
-  const [pasteValue, setPasteValue] = useState(SAMPLE_CSV);
+  const [csvContent, setCsvContent] = useState(SAMPLE_CSV);
+
+  const handleFile = useCallback((file) => {
+    if (!file) return;
+    setFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setCsvContent(e.target?.result || '');
+    };
+    reader.readAsText(file);
+  }, []);
 
   const handleDrop = useCallback((e) => {
     e.preventDefault();
     setDragOver(false);
     const file = e.dataTransfer.files[0];
-    if (file) setFileName(file.name);
-  }, []);
+    if (file) handleFile(file);
+  }, [handleFile]);
 
-  const handleFileInput = (e) => {
+  const handleFileInput = useCallback((e) => {
     const file = e.target.files?.[0];
-    if (file) setFileName(file.name);
-  };
+    if (file) handleFile(file);
+  }, [handleFile]);
 
   return (
     <div className="animate-fade-in max-w-2xl mx-auto w-full">
@@ -91,8 +101,8 @@ export default function UploadScreen({
         </button>
         {pasteOpen && (
           <textarea
-            value={pasteValue}
-            onChange={(e) => setPasteValue(e.target.value)}
+            value={csvContent}
+            onChange={(e) => setCsvContent(e.target.value)}
             rows={5}
             className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy"
             placeholder="student_id,question_id,response,correct..."
@@ -125,7 +135,7 @@ export default function UploadScreen({
 
       <button
         type="button"
-        onClick={onAnalyze}
+        onClick={() => onAnalyze(csvContent, className, subject)}
         className="mt-8 w-full rounded-xl bg-navy hover:bg-navy-light text-white font-semibold text-lg py-4 px-6 shadow-elevated transition-all hover:shadow-lg active:scale-[0.99] flex items-center justify-center gap-2"
       >
         Find Learning Gaps

@@ -3,7 +3,7 @@ import { LOADING_STEPS } from '../data/mockData';
 
 const STEP_DURATION_MS = 2800;
 
-export default function LoadingScreen({ onComplete }) {
+export default function LoadingScreen({ onComplete, isDataReady }) {
   const [completedSteps, setCompletedSteps] = useState(0);
   const [visibleSteps, setVisibleSteps] = useState(1);
 
@@ -21,9 +21,11 @@ export default function LoadingScreen({ onComplete }) {
       }, STEP_DURATION_MS);
       return () => clearTimeout(t);
     }
-    const done = setTimeout(() => onComplete?.(), 600);
-    return () => clearTimeout(done);
-  }, [completedSteps, onComplete]);
+    if (isDataReady) {
+      const done = setTimeout(() => onComplete?.(), 600);
+      return () => clearTimeout(done);
+    }
+  }, [completedSteps, onComplete, isDataReady]);
 
   const progressPercent = Math.min(
     100,

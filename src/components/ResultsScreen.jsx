@@ -1,15 +1,16 @@
-import { learningGaps } from '../data/mockData';
 import GapCard from './GapCard';
 
 export default function ResultsScreen({
   className,
   subject,
+  analysisResult,
   onEdit,
   onApprove,
   onRegenerate,
 }) {
-  const totalAffected = 18;
-  const totalStudents = 30;
+  const gaps = analysisResult?.learningGaps || [];
+  const totalAffected = analysisResult?.totalAffected || 0;
+  const totalStudents = analysisResult?.totalStudents || 0;
 
   return (
     <div className="animate-fade-in w-full max-w-3xl mx-auto pb-28">
@@ -23,7 +24,7 @@ export default function ResultsScreen({
       </div>
 
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm sm:text-base text-slate-600 mb-8 px-1">
-        <span className="font-semibold text-navy">3 learning gaps found</span>
+        <span className="font-semibold text-navy">{gaps.length} learning gaps found</span>
         <span className="text-slate-300" aria-hidden>•</span>
         <span>
           <strong className="text-navy">{totalAffected}/{totalStudents}</strong> students affected
@@ -33,8 +34,8 @@ export default function ResultsScreen({
       </div>
 
       <div className="space-y-6">
-        {learningGaps.map((gap, i) => (
-          <GapCard key={gap.id} gap={gap} index={i} />
+        {gaps.map((gap, i) => (
+          <GapCard key={gap.id || i} gap={gap} index={i} />
         ))}
       </div>
 
