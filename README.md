@@ -68,6 +68,8 @@ npm run preview
 
 ## Screens 🧭
 
+![Demo GIF](assets/demo.gif)
+
 1. Upload - CSV drag-and-drop or paste, plus class and subject
 2. Analyze - Status steps with progress
 3. Results - Gap cards with differentiated activities
