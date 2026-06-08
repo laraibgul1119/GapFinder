@@ -67,8 +67,9 @@ npm run preview
 ```
 
 ## Screens 🧭
-
-![Demo GIF](https://github.com/laraibgul1119/GapFinder/blob/main/assets/GapFinder_demo.gif)
+<p align="center">
+  <img src="https://github.com/laraibgul1119/GapFinder/blob/main/assets/GapFinder_demo.gif" alt="App Demo" width="500" />
+</p>
 
 1. Upload - CSV drag-and-drop or paste, plus class and subject
 2. Analyze - Status steps with progress
